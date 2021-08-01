@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import tinygradient from "tinygradient";
 import tinycolor from "tinycolor2";
 import "./kart";
+import "./kart/color";
 import "./App.css";
 
 /**
@@ -293,26 +294,26 @@ import "./App.css";
 // const gradient = tinygradient(res);
 
 function App() {
-    const [count, setCount] = useState(0);
+    const [ count, setCount ] = useState( 0 );
 
     return (
         <div className="App">
-            {/*<div*/}
+            {/* <div*/}
             {/*    id="bar"*/}
             {/*    style={{*/}
             {/*        width: "100vw",*/}
             {/*        height: "10vh",*/}
             {/*        background: gradient.css()*/}
             {/*    }}*/}
-            {/*></div>*/}
-            {/*<div>*/}
+            {/* ></div>*/}
+            {/* <div>*/}
             {/*    /!**/}
             {/*	  Array(10)*/}
             {/*		  .fill(0)*/}
             {/*		  .map((_, i) => tinycolor.mix("red", "yellow", i * 10).toRgbString())*/}
             {/*		  .map( s => <div style={{ background: s, width: "10vw", height: "10vh" }}/> )*/}
             {/*  *!/*/}
-            {/*</div>*/}
+            {/* </div>*/}
         </div>
     );
 }

@@ -16,17 +16,19 @@ export const position = ({ val = 0 } = { val: 0 }) => ({
 let moveId = 0;
 /**
  *
- * @param {Object} param
- * @param {string} param.id
+ * @param {Object|Color} param
+ * @param {string=} param.id
  * @param {string} param.color
  * @return {MoveCard}
  */
 export const moveCard = ({ id = moveId++ + "-move", color }) => ({ color, id });
 
+moveCard.avg = () => moveCard({ color: [ 127.5, 127.5, 127.5 ] });
+
 let segId = 0;
 /**
  * @param {Object} param
- * @param {string} param.id
+ * @param {string=} param.id
  * @param {string} param.color
  * @param {object} param.qual
  * @param {Position} param.pos
@@ -42,20 +44,20 @@ export const segment = ({
     qual,
     pos = position()
 }) => ({
-    id,
     color,
-    qual,
-    pos
+    id,
+    pos,
+    qual
 });
 
 let bodyId = 0;
 /**
  *
  * @param {Object} param
- * @param {string} param.id
+ * @param {string=} param.id
  * @param {string} param.color
  * @param {MoveCard[]} param.moves
- * @param {Position} param.pos
+ * @param {Position=} param.pos
  *
  * @returns {Body}
  */
@@ -65,10 +67,10 @@ export const body = ({
     color,
     moves = []
 }) => ({
-    id,
-    pos,
     color,
-    moves
+    id,
+    moves,
+    pos
 });
 
 let shellId = 0;
@@ -76,7 +78,7 @@ let shellId = 0;
  * @param {Object} param
  * @param {string|number} param.id
  * @param {Position=} param.pos
- * @param {string} param.color
+ * @param {string|Color} param.color
  * @param {Array.<MoveCard>=} param.moves
  * @return {Shell}
  */
@@ -86,9 +88,25 @@ export const shell = ({
     color,
     moves = []
 }) => ({
-    id,
-    pos,
     color,
+    id,
+    isShell: true,
     moves,
-    isShell: true
+    on:      {
+        collision: [
+            buildRemoveMoveCard( 2 ),
+            { action: "remove", property: "bodies", target: "world", value: id }
+        ]
+    },
+    pos
+});
+export const buildAddMoveCard = ( value ) => ({
+    action:   "add",
+    property: "moves",
+    value
+});
+export const buildRemoveMoveCard = ( value ) => ({
+    action:   "remove",
+    property: "moves",
+    value
 });

@@ -3,7 +3,7 @@
  ***************/
 
 /**
- * @typedef {string} Color
+ * @typedef {string|{ color: string }} Color
  */
 
 /**
