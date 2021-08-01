@@ -1,3 +1,4 @@
+import color from "color";
 /***************
  *   BUILDERS  *
  ***************/
@@ -23,7 +24,8 @@ let moveId = 0;
  */
 export const moveCard = ({ id = moveId++ + "-move", color }) => ({ color, id });
 
-moveCard.avg = () => moveCard({ color: [ 127.5, 127.5, 127.5 ] });
+moveCard.avg = () =>
+    moveCard({ color: color([ 127.5, 127.5, 127.5 ]).rgb().string() });
 
 let segId = 0;
 /**

@@ -10,7 +10,6 @@ const renderBody = ( bodies ) =>
         .map( ( b ) => b.color )
         .join( " " )};border-radius: 3px`;
 
-
 export const renderWorldState = ( world ) => {
     const track = world.segments.reduce( ( s ) => s + "%c ", "" ); // can't use join because for the css to work there has to be a space after each '%c' and `.join(' ')` trims the last space
     const colors = world.segments.map( ( s, i ) => {
@@ -22,7 +21,8 @@ export const renderWorldState = ( world ) => {
     });
     console.log(
         track,
-        ...colors,
-        ...world.bodies.map( pick([ "pos", "moves", "id" ]) )
+        ...colors
+        // ...world.bodies.map( pick([ "pos", "moves", "id" ]) )
     );
+    console.log( world );
 };

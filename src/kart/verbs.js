@@ -131,7 +131,6 @@ export function playAMove( world, player, cardId ) {
 
     // apply collision consequence to the player
     actionGroups?.player?.forEach( ( action ) => apply( action, player ) );
-    if ( !player.moves.length ) player.moves.push( moveCard.avg() );
 
     // remove all self-destructing bodies
     actionGroups?.world?.forEach( ( action ) => apply( action, world ) );

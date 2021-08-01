@@ -21,11 +21,11 @@ const world = {
     bodies: [
         body({
             color: "red",
-            moves: [ moveCard( red ), moveCard( red ), moveCard( red ) ]
+            moves: [] // [ moveCard( red ), moveCard( red ), moveCard( red ) ]
         }),
         body({
             color: "yellow",
-            moves: [ moveCard( yellow ), moveCard( yellow ), moveCard( yellow ) ]
+            moves: [] // [ moveCard( yellow ), moveCard( yellow ), moveCard( yellow ) ]
         }),
         shell({
             color: green.color,
@@ -48,29 +48,13 @@ const world = {
 
 const maxPlayers = world.bodies.filter( ( b ) => !b.isShell ).length;
 
-function init( worldState, playerIndex = 0, card ) {
-    if ( card ) {
-        const turnDetails = playAMove(
-            world,
-            world.bodies[ playerIndex ],
-            card.id
-        );
-        renderWorldState( world );
-        console.log( turnDetails );
-    }
-
-    const nextPlayerIndex =
-        maxPlayers === playerIndex + 1 ? 0 : playerIndex + 1;
-
-    const cards = world.bodies[ playerIndex ].moves.map( ( card, i ) => {
+const renderCurrentPlayerUI = ( world, player ) => {
+    const cards = player.moves.map( ( card, i ) => {
         const key = String.fromCharCode( i + 97 );
-        window[ key ] = () => init( world, nextPlayerIndex, card );
         return { ...card, key };
     });
 
-    const [ playerTarget, playerCSS ] = playerComponent(
-        world.bodies[ playerIndex ]
-    );
+    const [ playerTarget, playerCSS ] = playerComponent( player );
     const [ cardOptionsTargets, cardOptionsCSS ] = cardOptionsComponents( cards );
 
     console.log(
@@ -80,7 +64,33 @@ function init( worldState, playerIndex = 0, card ) {
         "",
         ...cardOptionsCSS
     );
+};
+
+const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
+    player.moves.map( ( card, i ) => {
+        const key = String.fromCharCode( i + 97 );
+        window[ key ] = () => {
+            const turnDetails = playAMove( worldState, player, card.id );
+            console.log( turnDetails );
+            init(
+                worldState,
+                maxPlayers === playerIndex + 1 ? 0 : playerIndex + 1
+            );
+        };
+    });
+};
+
+function init( worldState, playerIndex = 0 ) {
+    const player = worldState.bodies[ playerIndex ];
+    if ( !player.moves.length ) player.moves.push( moveCard.avg() );
+    // render world UI
+    console.log( "" );
+    renderWorldState( worldState );
+
+    // render player UI
+    renderCurrentPlayerUI( worldState, player );
+    // add player actions (and setup next turn)
+    wireUpPlayerActions( worldState, player, playerIndex );
 }
 
-renderWorldState( world );
 init( world );
