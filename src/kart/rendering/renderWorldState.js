@@ -1,5 +1,3 @@
-import { pick } from "lodash/fp";
-
 const renderScale = 1;
 const renderSegment = ( seg ) =>
     `background:${seg.color};padding: ${renderScale * 5}px ${

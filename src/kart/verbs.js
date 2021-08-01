@@ -1,9 +1,7 @@
 import kindof from "kind-of";
 import { groupBy, isEqual } from "lodash";
-import color from "color";
 import { colorDistance } from "../utils/colorDistance";
 import { normColor } from "../utils/normalize";
-import { moveCard } from "./parts";
 
 // TODO: convert pos into a graph in this case it's a graph that *just* points "up"
 /**
@@ -48,7 +46,7 @@ function add( target, value ) {
         number:  () => target + value
     };
 
-    const func = map[ kindof( target ) ] ?? map.default();
+    const func = map[ kindof( target ) ] ?? map.default;
     return func();
 }
 
@@ -65,7 +63,7 @@ function remove( target, value ) {
         number:  () => target - value
     };
 
-    const func = map[ kindof( target ) ] ?? map.default();
+    const func = map[ kindof( target ) ] ?? map.default;
     return func();
 }
 

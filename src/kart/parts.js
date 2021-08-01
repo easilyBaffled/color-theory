@@ -97,6 +97,7 @@ export const shell = ({
     on:      {
         collision: [
             buildRemoveMoveCard( 2 ),
+            { action: "add", property: "crashed", value: true },
             { action: "remove", property: "bodies", target: "world", value: id }
         ]
     },

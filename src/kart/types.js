@@ -36,6 +36,7 @@
  * @typedef {Base & Object} Body
  * @property {MoveCard[]} moves
  * @property {Position} pos
+ * @property {boolean} crashed
  */
 
 /**
@@ -46,4 +47,5 @@
  * @typedef {Base & Object} World
  * @property {Segment} segments
  * @property {Body[]} bodies
+ * @property {number} cardsPlayed
  */
