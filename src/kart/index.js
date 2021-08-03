@@ -7,7 +7,7 @@ import {
     segment,
     shell
 } from "./parts";
-import { playAMove, playAnItem } from "./verbs";
+import { moveShells, playAMove, playAnItem } from "./verbs";
 import { addTweenColors, blue, green, red, yellow } from "./color";
 import { renderWorldState } from "./rendering/renderWorldState";
 import { renderCurrentPlayerUI } from "./render/renderCurrentPlayerUI";
@@ -31,7 +31,7 @@ const world = {
         shell({
             color: green.color,
             moves: [ moveCard( green ), moveCard( green ), moveCard( green ) ],
-            pos:   position({ val: 2 })
+            pos:   position({ val: 3 })
         })
     ],
     cardsPlayed: 0,
@@ -95,7 +95,13 @@ const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
             worldState.cardsPlayed += 1;
             if ( isTurnOver( worldState, player ) ) {
                 resetTurn( worldState, player );
-                init( worldState, getNextPlayerIndex( worldState, playerIndex ) );
+                const nextPlayerIndex = getNextPlayerIndex(
+                    worldState,
+                    playerIndex
+                );
+                if ( nextPlayerIndex === 0 ) moveShells( world );
+
+                init( worldState, nextPlayerIndex );
             } else init( worldState, playerIndex );
         };
 

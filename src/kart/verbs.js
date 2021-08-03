@@ -1,8 +1,9 @@
-import kindof from "kind-of";
 import { groupBy, isEqual } from "lodash";
 import { colorDistance } from "../utils/colorDistance";
 import { normColor } from "../utils/normalize";
 import { moveCard, position, shell } from "./parts";
+import { apply } from "./action";
+import { renderWorldState } from "./rendering/renderWorldState";
 
 function getNextPosition( world, pos ) {
     return position( world.segments[ pos.val + 1 ] ? pos.val + 1 : 0 );
@@ -22,7 +23,8 @@ function movePlayerToNextSegment( world, player ) {
 }
 
 /**
- *
+ * Get the player's score in the segment
+ * the `/2` is to account for the fact that we are also adding the color of the card
  * @param {Segment} segment
  * @param {Body} player
  * @return {Number}
@@ -42,43 +44,6 @@ function getSegmentConsequence( segment, score ) {
     );
 
     return segment.qual[ key ];
-}
-
-function add( target, value ) {
-    const map = {
-        array:   () => target.concat( value ),
-        default: () => value,
-        number:  () => target + value
-    };
-
-    const func = map[ kindof( target ) ] ?? map.default;
-    return func();
-}
-
-function remove( target, value ) {
-    const map = {
-        array: () => {
-            const map = {
-                number: () => target.slice( value ),
-                string: () => target.filter( ( x ) => x.id !== value )
-            };
-            return map[ kindof( value ) ]();
-        },
-        default: () => value,
-        number:  () => target - value
-    };
-
-    const func = map[ kindof( target ) ] ?? map.default;
-    return func();
-}
-
-export function apply({ action, value, property }, target ) {
-    const map = {
-        add,
-        remove
-    };
-
-    target[ property ] = map[ action ]( target[ property ], value );
 }
 
 function spendPlayerCard( player, cardId = player.moves[ 0 ].id ) {
@@ -133,6 +98,26 @@ export function playAnItem( world, player, cardId, item ) {
     // apply collision?
 }
 
+function applyCollisions( world, body ) {
+    // COLLISIONS
+    // get all colliding bodies in the segment -> bodies
+    const bodies = findAllColliders( world, body );
+
+    // get collision event actions from each body -> consequence
+    const collisionConsequence = bodies
+        .flatMap( getBodyColliderActions )
+        .filter( ( v ) => v );
+
+    // separate destroy actions from consequence
+    const actionGroups = splitActionsByTarget( collisionConsequence );
+
+    // apply collision consequence to the player
+    actionGroups?.player?.forEach( ( action ) => apply( action, body ) );
+
+    // remove all self-destructing bodies
+    actionGroups?.world?.forEach( ( action ) => apply( action, world ) );
+}
+
 /**
  *
  * @param {World} world
@@ -153,23 +138,7 @@ export function playAMove( world, player, cardId ) {
     // apply consequence to player
     apply( consequence, player );
 
-    // COLLISIONS
-    // get all colliding bodies in the segment -> bodies
-    const bodies = findAllColliders( world, player );
-
-    // get collision event actions from each body -> consequence
-    const collisionConsequence = bodies
-        .flatMap( getBodyColliderActions )
-        .filter( ( v ) => v );
-
-    // separate destroy actions from consequence
-    const actionGroups = splitActionsByTarget( collisionConsequence );
-
-    // apply collision consequence to the player
-    actionGroups?.player?.forEach( ( action ) => apply( action, player ) );
-
-    // remove all self-destructing bodies
-    actionGroups?.world?.forEach( ( action ) => apply( action, world ) );
+    applyCollisions( world, player );
 
     return {
         card,
@@ -177,4 +146,37 @@ export function playAMove( world, player, cardId ) {
         score,
         seg
     };
+}
+
+function getAllShells( world ) {
+    return world.bodies.filter( ( body ) => body.isShell );
+}
+
+const byId =
+    ({ id }) =>
+        ( entity ) =>
+            entity.id === id;
+
+function isBodyInTheWorld( world, shell ) {
+    return !!world.bodies.find( byId( shell ) );
+}
+
+function hasMoves( shell ) {
+    return shell.moves.length;
+}
+
+function moveShell( world, shell, maxMoves ) {
+    // if shell is (still) in the world
+    if ( !maxMoves || !isBodyInTheWorld( world, shell ) ) return;
+
+    playAMove( world, shell );
+    renderWorldState( world );
+    moveShell( world, shell, maxMoves - 1 );
+}
+
+export function moveShells( world ) {
+    // get all shells
+    const shells = getAllShells( world );
+    // for each shell: moveShell
+    shells.forEach( ( shell ) => moveShell( world, shell, shell.moves.length ) );
 }
