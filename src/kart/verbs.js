@@ -2,6 +2,11 @@ import kindof from "kind-of";
 import { groupBy, isEqual } from "lodash";
 import { colorDistance } from "../utils/colorDistance";
 import { normColor } from "../utils/normalize";
+import { moveCard, position, shell } from "./parts";
+
+function getNextPosition( world, pos ) {
+    return position( world.segments[ pos.val + 1 ] ? pos.val + 1 : 0 );
+}
 
 // TODO: convert pos into a graph in this case it's a graph that *just* points "up"
 /**
@@ -93,6 +98,39 @@ function splitActionsByTarget( actions ) {
     const groups = groupBy( actions, "target" );
     groups.player = groups[ "undefined" ];
     return groups;
+}
+
+/**
+ *
+ /**
+ *
+ * @param {World} world
+ * @param {Body} player
+ * @param {string|number=} cardId
+ * @param {string} item
+ */
+export function playAnItem( world, player, cardId, item ) {
+    // player spends a card
+    const card = spendPlayerCard( player, cardId );
+    // create item
+    const newShell = shell({
+        color: card.color,
+        moves: Array( 3 )
+            .fill( 0 )
+            .map( () => moveCard({ color: card.color }) ),
+        pos: getNextPosition( world, player.pos )
+    });
+    // create add item action
+    const action = {
+        action:   "add",
+        property: "bodies",
+        target:   "world",
+        value:    newShell
+    };
+    // apply item to world
+    apply( action, world );
+
+    // apply collision?
 }
 
 /**

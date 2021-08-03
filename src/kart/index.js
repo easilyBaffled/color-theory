@@ -7,7 +7,7 @@ import {
     segment,
     shell
 } from "./parts";
-import { playAMove } from "./verbs";
+import { playAMove, playAnItem } from "./verbs";
 import { addTweenColors, blue, green, red, yellow } from "./color";
 import { renderWorldState } from "./rendering/renderWorldState";
 import { renderCurrentPlayerUI } from "./render/renderCurrentPlayerUI";
@@ -87,14 +87,20 @@ const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
 
     player.moves.map( ( card, i ) => {
         const key = String.fromCharCode( i + 97 );
-        window[ key ] = () => {
-            const turnDetails = playAMove( worldState, player, card.id );
+        window[ key ] = ( item ) => {
+            const turnDetails = item
+                ? playAnItem( worldState, player, card.id, item )
+                : playAMove( worldState, player, card.id );
             console.log( turnDetails );
             worldState.cardsPlayed += 1;
             if ( isTurnOver( worldState, player ) ) {
                 resetTurn( worldState, player );
                 init( worldState, getNextPlayerIndex( worldState, playerIndex ) );
             } else init( worldState, playerIndex );
+        };
+
+        window[ key ].shell = () => {
+            window[ key ]( "shell" );
         };
     });
 };
