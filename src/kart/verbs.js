@@ -4,6 +4,7 @@ import { normColor } from "../utils/normalize";
 import { moveCard, position, shell } from "./parts";
 import { apply } from "./action";
 import { renderWorldState } from "./rendering/renderWorldState";
+import { MAX_CARDS_PLAYED_PER_TURN } from "./constants";
 
 function getNextPosition( world, pos ) {
     return position( world.segments[ pos.val + 1 ] ? pos.val + 1 : 0 );
@@ -80,7 +81,7 @@ export function playAnItem( world, player, cardId, item ) {
     // create item
     const newShell = shell({
         color: card.color,
-        moves: Array( 3 )
+        moves: Array( MAX_CARDS_PLAYED_PER_TURN )
             .fill( 0 )
             .map( () => moveCard({ color: card.color }) ),
         pos: getNextPosition( world, player.pos )
@@ -96,6 +97,7 @@ export function playAnItem( world, player, cardId, item ) {
     apply( action, world );
 
     // apply collision?
+    moveShell( world, newShell, newShell.moves.length );
 }
 
 function applyCollisions( world, body ) {
@@ -116,6 +118,18 @@ function applyCollisions( world, body ) {
 
     // remove all self-destructing bodies
     actionGroups?.world?.forEach( ( action ) => apply( action, world ) );
+
+    if ( body.isShell && body.crashed ) {
+        apply(
+            {
+                action:   "remove",
+                property: "bodies",
+                target:   "world",
+                value:    body.id
+            },
+            world
+        );
+    }
 }
 
 /**
