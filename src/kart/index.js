@@ -79,9 +79,14 @@ const getNextPlayerIndex = ( worldState, playerIndex ) => {
     return maxPlayers === playerIndex + 1 ? 0 : playerIndex + 1;
 };
 
+let items = [ "shield", "shell", "wildCard" ];
+
 const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
     window.done = () => {
         resetTurn( worldState, player );
+
+        const nextPlayerIndex = getNextPlayerIndex( worldState, playerIndex );
+        if ( nextPlayerIndex === 0 ) moveShells( world );
         init( worldState, getNextPlayerIndex( worldState, playerIndex ) );
     };
 
@@ -105,9 +110,11 @@ const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
             } else init( worldState, playerIndex );
         };
 
-        window[ key ].shell = () => {
-            window[ key ]( "shell" );
-        };
+        items.forEach( name => {
+            window[ key ][ name ] = () =>
+                window[ key ]( name );
+
+        });
     });
 };
 

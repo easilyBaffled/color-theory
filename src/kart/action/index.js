@@ -36,3 +36,13 @@ export function apply({ action, value, property }, target ) {
 
     target[ property ] = map[ action ]( target[ property ], value );
 }
+
+export function applyShielding({ action, value, property }, target ) {
+    // - crashed is nullified
+    if ( property !== "crashed" ) {
+        // - remove is applied to shield not cards
+        apply({ action, property: "shield", value }, target );
+        // do a Math.max check to ensure shield is never zero
+        target.shield = Math.max( 0, target.shield );
+    }
+}

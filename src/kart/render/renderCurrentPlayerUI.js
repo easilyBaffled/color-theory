@@ -17,16 +17,18 @@ export const renderCurrentPlayerUI = ( world, player ) => {
         playerCSS,
         "",
         ...cardOptionsCSS,
-        `\n use ${new Intl.ListFormat( "en", {
+        `\n\n\nUse ${new Intl.ListFormat( "en", {
             style: "short",
             type:  "disjunction"
         }).format(
             cards.map( ( c ) => c.key + "()" )
-        )} and {enter} to play a card or done() and {enter} to end your turn.\n\n`,
-        `You have already made ${
-            world.cardsPlayed
-        } moves this turn you can only make ${
-            MAX_CARDS_PLAYED_PER_TURN - world.cardsPlayed
-        } more moves this turn.`
+        )} and <enter> to play a card to move.\n
+        To use a card as an item use {cardName}.{itemName}() for example: a.shell() or b.wildCard() <enter>.\n
+        Or use done() and <enter> to end your turn.\n\n
+        You have already made ${
+    world.cardsPlayed
+} moves this turn you can only make ${
+    MAX_CARDS_PLAYED_PER_TURN - world.cardsPlayed
+} more moves this turn.`.replace( /^( +)/gm, "" )
     );
 };

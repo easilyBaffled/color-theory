@@ -23,6 +23,11 @@
  */
 
 /**
+ * @typedef {object} Shielded
+ * @property {number} shield
+ */
+
+/**
  * @typedef {Base} MoveCard
  */
 
@@ -33,7 +38,7 @@
  */
 
 /**
- * @typedef {Base & Object} Body
+ * @typedef {Base & Shielded & Object} Body
  * @property {MoveCard[]} moves
  * @property {Position} pos
  * @property {boolean} crashed

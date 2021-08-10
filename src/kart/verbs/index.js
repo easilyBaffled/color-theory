@@ -1,10 +1,11 @@
 import { groupBy, isEqual } from "lodash";
-import { colorDistance } from "../utils/colorDistance";
-import { normColor } from "../utils/normalize";
-import { moveCard, position, shell } from "./parts";
-import { apply } from "./action";
-import { renderWorldState } from "./rendering/renderWorldState";
-import { MAX_CARDS_PLAYED_PER_TURN } from "./constants";
+import { colorDistance } from "../../utils/colorDistance";
+import { normColor } from "../../utils/normalize";
+import { moveCard, position, shell } from "../parts";
+import { apply, applyShielding } from "../action";
+import { renderWorldState } from "../rendering/renderWorldState";
+import { MAX_CARDS_PLAYED_PER_TURN, SHIELD_ADD } from "../constants";
+import { playAWildCard } from "./playAWildCard";
 
 function getNextPosition( world, pos ) {
     return position( world.segments[ pos.val + 1 ] ? pos.val + 1 : 0 );
@@ -47,7 +48,7 @@ function getSegmentConsequence( segment, score ) {
     return segment.qual[ key ];
 }
 
-function spendPlayerCard( player, cardId = player.moves[ 0 ].id ) {
+export function spendPlayerCard( player, cardId = player.moves[ 0 ].id ) {
     const cardIndex = player.moves.findIndex( ( m ) => m.id === cardId );
     return player.moves.splice( cardIndex, 1 )[ 0 ];
 }
@@ -66,6 +67,13 @@ function splitActionsByTarget( actions ) {
     return groups;
 }
 
+export function playAShield( world, player, cardId ) {
+    // get card
+    const card = spendPlayerCard( player, cardId );
+    // add shield value to player shield
+    player.shield += SHIELD_ADD;
+}
+
 /**
  *
  /**
@@ -76,6 +84,9 @@ function splitActionsByTarget( actions ) {
  * @param {string} item
  */
 export function playAnItem( world, player, cardId, item ) {
+    if ( item === "wildCard" ) return playAWildCard( world, player, cardId );
+    if ( item === "shield" ) return playAShield( world, player, cardId );
+
     // player spends a card
     const card = spendPlayerCard( player, cardId );
     // create item
@@ -95,9 +106,12 @@ export function playAnItem( world, player, cardId, item ) {
     };
     // apply item to world
     apply( action, world );
-
+    // see the item in the world before it moves
+    renderWorldState( world );
     // apply collision?
     moveShell( world, newShell, newShell.moves.length );
+
+    return { action };
 }
 
 function applyCollisions( world, body ) {
@@ -113,23 +127,42 @@ function applyCollisions( world, body ) {
     // separate destroy actions from consequence
     const actionGroups = splitActionsByTarget( collisionConsequence );
 
+    const { shield } = body; // need to save the value before it gets reduced, in case there is a `reduce` followed by a `crashed` from one shell
+
     // apply collision consequence to the player
-    actionGroups?.player?.forEach( ( action ) => apply( action, body ) );
+    actionGroups?.player?.forEach( ( action ) => {
+        if ( shield ) applyShielding( action, body );
+        else apply( action, body );
+    });
 
     // remove all self-destructing bodies
     actionGroups?.world?.forEach( ( action ) => apply( action, world ) );
 
-    if ( body.isShell && body.crashed ) {
-        apply(
-            {
-                action:   "remove",
-                property: "bodies",
-                target:   "world",
-                value:    body.id
-            },
-            world
-        );
+    // apply body's collision to remaining bodies
+    // get bodies collision actions
+    const bodyActions = getBodyColliderActions( body );
+    // split actions into player and world
+    const bodyActionGroups = splitActionsByTarget( bodyActions );
+    // apply actions to all `bodies`
+    bodyActionGroups?.player?.forEach( ( action ) =>
+        bodies.forEach( ( b ) => apply( action, b ) )
+    );
+    if ( bodies.length ) {
+        // no reason to apply collision (trigger self-destruct) if there was no collision
+        // apply actions to the  world
+        bodyActionGroups?.world?.forEach( ( action ) => apply( action, world ) );
     }
+    // if ( body.isShell && body.crashed ) {
+    //     apply(
+    //         {
+    //             action:   "remove",
+    //             property: "bodies",
+    //             target:   "world",
+    //             value:    body.id
+    //         },
+    //         world
+    //     );
+    // }
 }
 
 /**

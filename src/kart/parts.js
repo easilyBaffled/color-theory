@@ -72,7 +72,8 @@ export const body = ({
     color,
     id,
     moves,
-    pos
+    pos,
+    shield: 0
 });
 
 let shellId = 0;
