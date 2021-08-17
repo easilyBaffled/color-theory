@@ -38,14 +38,82 @@
 
 </details>
 
-### Boost
+<details>
+  <summary><strong>Boost</strong></summary>
 
-- [ ] create boost item - increase max number of cards for x turns
+- [x] what is the boost
+
+> Boosting is the ability to increase your current speed and top speed for a limited amount of time
+
+- [ ] How Will it work
+
+> I think it will only last for one turn but all of your moves should be given increased value, which would result in you getting more cards.
+> Which, without the max card limit would let you go forever perhaps
+> it should increase your eval score by a certain amount and increase the max card limit for the turn
+
+    - [x] Does color matter
+
+> Color should be ignored, this is a flat number applied after the color eval
+
+    - [x] What’s the distance with transparent?
+
+> currently nothing because I don't factor in the alpha in a color
+
+    - [x] How will it be applied to a body
+
+> it can be a boolean flag on the body, like crashed and then easily read off the body when needed
+
+    - [x] How will it be measured in the eval
+
+> shouldn't be more than a `+ body.boost ? BOOST : 0`
+
+    - [x] How will it be reset
+
+> it can be done in the same place as `crashed`
+
+    - [x] What happens when you play more than one?
+
+> for the sake of simplicity nothing
+
+- [ ] make `playABoost` function
+
+</details>
+
+<details>
+  <summary><strong>Rendering Shield</strong></summary>
+- [ ] transparent border?
+- [ ] Rgba a=1 border?
+- [ ] Else margin *or* border, for player
+</details>
+
+<details>
+  <summary><strong>Rendering Boost</strong></summary>
+- [ ] icon/emoji?
+</details>
+
+<details>
+  <summary><strong>Rendering shell</strong></summary>
+- [ ] circle
+</details>
+
+<details>
+	<summary><strong>Separation</strong></summary>
+	- [ ] move all rendering to “component” files
+	- [ ] Move all verbs to standalone files
+	- [ ] Move all state building to dir
+	- [ ] what state updates should hook into rendering so that I can share the changes across webRTC and have everyone
+	  render accordingly (shell moving is currently moving outside of the normal looping)
+</details>
+
+<details>
+  <summary><strong>WebRTC</strong></summary>
 - [ ] https://surma.dev/things/comlink-webrtc/
 - [ ] https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel
+</details>
 
 Thoughts
 
 - what if each item has a cost and color, so you have to spend any amount of cards to equal that cost additional color
   can change affects of things so green, red, blue shell all have different costs and effects
 - make entity types boolean flags so body is 0001, item is 0010 shell is 010 green 1000 so green shell would be 1110
+	- you can use text-decoration in console https://codepen.io/nikki-peel/pen/zYovZmv
