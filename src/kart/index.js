@@ -11,7 +11,7 @@ import { moveShells, playAMove, playAnItem } from "./verbs";
 import { addTweenColors, blue, green, red, yellow } from "./color";
 import { renderWorldState } from "./rendering/renderWorldState";
 import { renderCurrentPlayerUI } from "./render/renderCurrentPlayerUI";
-import { MAX_CARDS_PLAYED_PER_TURN } from "./constants";
+import { BOOST_MAX_CARDS, items, MAX_CARDS_PLAYED_PER_TURN } from "./constants";
 import { playerComponent } from "./rendering/playerComponent";
 
 /**
@@ -58,7 +58,10 @@ const isTurnOver = ( worldState, player ) => {
         console.log( playerTarget, playerCSS, "ran out of moves." );
         return true;
     }
-    if ( worldState.cardsPlayed >= MAX_CARDS_PLAYED_PER_TURN ) {
+    if (
+        worldState.cardsPlayed >=
+        ( player.boost ? BOOST_MAX_CARDS : MAX_CARDS_PLAYED_PER_TURN )
+    ) {
         console.log(
             playerTarget,
             playerCSS,
@@ -71,6 +74,7 @@ const isTurnOver = ( worldState, player ) => {
 const resetTurn = ( worldState, player ) => {
     worldState.cardsPlayed = 0;
     player.crashed = false;
+    player.boost = false;
     if ( !player.moves.length ) player.moves.push( moveCard.avg() );
 };
 
@@ -78,8 +82,6 @@ const getNextPlayerIndex = ( worldState, playerIndex ) => {
     const maxPlayers = worldState.bodies.filter( ( b ) => !b.isShell ).length;
     return maxPlayers === playerIndex + 1 ? 0 : playerIndex + 1;
 };
-
-let items = [ "shield", "shell", "wildCard" ];
 
 const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
     window.done = () => {
@@ -110,10 +112,8 @@ const wireUpPlayerActions = ( worldState, player, playerIndex ) => {
             } else init( worldState, playerIndex );
         };
 
-        items.forEach( name => {
-            window[ key ][ name ] = () =>
-                window[ key ]( name );
-
+        items.forEach( ( name ) => {
+            window[ key ][ name ] = () => window[ key ]( name );
         });
     });
 };

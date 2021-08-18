@@ -4,7 +4,7 @@ import { normColor } from "../../utils/normalize";
 import { moveCard, position, shell } from "../parts";
 import { apply, applyShielding } from "../action";
 import { renderWorldState } from "../rendering/renderWorldState";
-import { MAX_CARDS_PLAYED_PER_TURN, SHIELD_ADD } from "../constants";
+import { BOOST_VAL, MAX_CARDS_PLAYED_PER_TURN, SHIELD_ADD } from "../constants";
 import { playAWildCard } from "./playAWildCard";
 
 function getNextPosition( world, pos ) {
@@ -74,6 +74,13 @@ export function playAShield( world, player, cardId ) {
     player.shield += SHIELD_ADD;
 }
 
+export function playABoost( world, player, cardId ) {
+    // get card
+    const card = spendPlayerCard( player, cardId );
+    // add shield value to player shield
+    player.boost = true;
+}
+
 /**
  *
  /**
@@ -86,6 +93,7 @@ export function playAShield( world, player, cardId ) {
 export function playAnItem( world, player, cardId, item ) {
     if ( item === "wildCard" ) return playAWildCard( world, player, cardId );
     if ( item === "shield" ) return playAShield( world, player, cardId );
+    if ( item === "boost" ) return playABoost( world, player, cardId );
 
     // player spends a card
     const card = spendPlayerCard( player, cardId );
@@ -178,7 +186,10 @@ export function playAMove( world, player, cardId ) {
     const seg = movePlayerToNextSegment( world, player );
 
     // evaluate player in segment -> score
-    const score = evalPlayerInSeg( seg, player ) + evalPlayerInSeg( seg, card );
+    const score =
+        evalPlayerInSeg( seg, player ) +
+        evalPlayerInSeg( seg, card ) +
+        ( player.boost ? BOOST_VAL : 0 );
     // get consequence from segment -> consequence
     const consequence = getSegmentConsequence( seg, score );
 
@@ -190,6 +201,11 @@ export function playAMove( world, player, cardId ) {
     return {
         card,
         consequence,
+        detailedScore: {
+            boost:  player.boost ? BOOST_VAL : 0,
+            card:   evalPlayerInSeg( seg, card ),
+            player: evalPlayerInSeg( seg, player )
+        },
         score,
         seg
     };

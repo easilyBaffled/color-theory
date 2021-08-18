@@ -28,6 +28,11 @@
  */
 
 /**
+ * @typedef {object} Boostable
+ * @property {boolean} boost
+ */
+
+/**
  * @typedef {Base} MoveCard
  */
 
@@ -38,7 +43,7 @@
  */
 
 /**
- * @typedef {Base & Shielded & Object} Body
+ * @typedef {Base & Shielded & Boostable & Object} Body
  * @property {MoveCard[]} moves
  * @property {Position} pos
  * @property {boolean} crashed

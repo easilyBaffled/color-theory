@@ -1,6 +1,10 @@
 import { playerComponent } from "../rendering/playerComponent";
 import { cardOptionsComponents } from "../rendering/renderCardOptions";
-import { MAX_CARDS_PLAYED_PER_TURN } from "../constants";
+import {
+    BOOST_MAX_CARDS,
+    items,
+    MAX_CARDS_PLAYED_PER_TURN
+} from "../constants";
 
 export const renderCurrentPlayerUI = ( world, player ) => {
     const cards = player.moves.map( ( card, i ) => {
@@ -24,11 +28,13 @@ export const renderCurrentPlayerUI = ( world, player ) => {
             cards.map( ( c ) => c.key + "()" )
         )} and <enter> to play a card to move.\n
         To use a card as an item use {cardName}.{itemName}() for example: a.shell() or b.wildCard() <enter>.\n
+        Your available items are ${items.join( ", " )}\n
         Or use done() and <enter> to end your turn.\n\n
         You have already made ${
     world.cardsPlayed
 } moves this turn you can only make ${
-    MAX_CARDS_PLAYED_PER_TURN - world.cardsPlayed
+    ( player.boost ? BOOST_MAX_CARDS : MAX_CARDS_PLAYED_PER_TURN ) -
+            world.cardsPlayed
 } more moves this turn.`.replace( /^( +)/gm, "" )
     );
 };

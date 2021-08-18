@@ -75,7 +75,11 @@
 
 > for the sake of simplicity nothing
 
-- [ ] make `playABoost` function
+- [x] create `Boostable` typedef
+- [x] make `playABoost` function
+- [x] add reading the boost to eval
+- [x] count boost in turns
+- [x] boost in UI
 
 </details>
 
