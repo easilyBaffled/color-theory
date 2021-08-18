@@ -5,6 +5,7 @@ import {
     items,
     MAX_CARDS_PLAYED_PER_TURN
 } from "../constants";
+import { renderPlayer } from "../rendering/renderPlayer";
 
 export const renderCurrentPlayerUI = ( world, player ) => {
     const cards = player.moves.map( ( card, i ) => {
@@ -12,11 +13,11 @@ export const renderCurrentPlayerUI = ( world, player ) => {
         return { ...card, key };
     });
 
-    const [ playerTarget, playerCSS ] = playerComponent( player );
+    const playerCSS = renderPlayer( player );
     const [ cardOptionsTargets, cardOptionsCSS ] = cardOptionsComponents( cards );
 
     console.log(
-        "%cPlayer" + playerTarget + "%c's cards:" + cardOptionsTargets,
+        "%cPlayer %c %c's cards:" + cardOptionsTargets,
         "",
         playerCSS,
         "",

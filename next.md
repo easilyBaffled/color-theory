@@ -45,7 +45,7 @@
 
 > Boosting is the ability to increase your current speed and top speed for a limited amount of time
 
-- [ ] How Will it work
+- [x] How Will it work
 
 > I think it will only last for one turn but all of your moves should be given increased value, which would result in you getting more cards.
 > Which, without the max card limit would let you go forever perhaps
@@ -79,6 +79,7 @@
 - [x] make `playABoost` function
 - [x] add reading the boost to eval
 - [x] count boost in turns
+- [x] reset boost at end of turn
 - [x] boost in UI
 
 </details>

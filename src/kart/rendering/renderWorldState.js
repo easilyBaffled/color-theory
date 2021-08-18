@@ -1,5 +1,6 @@
 import { renderSegment } from "./renderSegment";
 import { renderScale } from "./constants";
+import { renderPlayer } from "./renderPlayer";
 
 const renderBody = ( bodies ) =>
     `border: ${renderScale * 3}px dashed; border-color: ${bodies
@@ -8,10 +9,11 @@ const renderBody = ( bodies ) =>
 
 export const playerTrackComponent = ( player ) => {
     const arr = Array( player.pos.val ).fill( 0 );
-    const targets = arr.reduce( ( s ) => s + "%c ", "" ) + "%c ";
+    const targets =
+        arr.reduce( ( s ) => s + "%c ", "" ) + "%c" + ( player.boost ? "🍄" : " " );
     const styles = arr
         .map( () => renderSegment({ color: "transparent" }) )
-        .concat( renderSegment( player ) );
+        .concat( renderPlayer( player ) );
 
     return [ targets, styles ];
 };
