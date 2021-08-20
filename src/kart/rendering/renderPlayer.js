@@ -1,8 +1,9 @@
 import { renderSegment } from "./renderSegment";
 
-export const renderPlayer = ( player ) => {
+export const renderPlayer = ( body ) => {
     let str =
-        renderSegment( player ) + " border-radius: 3px; box-sizing: border-box;";
-    if ( player.shield ) str += "border-color: white;";
+        renderSegment( body ) + " border-radius: 3px; box-sizing: border-box;";
+    if ( body.shield ) str += "border-color: white;";
+    if ( body.isShell ) str += "border-radius: 15px;";
     return str;
 };

@@ -86,14 +86,14 @@
 
 <details>
   <summary><strong>Rendering Shield</strong></summary>
-- [ ] transparent border?
-- [ ] Rgba a=1 border?
-- [ ] Else margin *or* border, for player
+- [x] transparent border?
+- [x] Rgba a=1 border?
+- [x] Else margin *or* border, for player
 </details>
 
 <details>
   <summary><strong>Rendering Boost</strong></summary>
-- [ ] icon/emoji?
+- [x] icon/emoji?
 </details>
 
 <details>

@@ -25,7 +25,6 @@ export const renderWorldState = ( world ) => {
     console.log( track, ...colors );
     world.bodies.forEach( ( b ) => {
         const [ targets, styles ] = playerTrackComponent( b );
-        styles[ styles.length - 1 ] += "border-radius: 3px";
         console.log( targets, ...styles );
     });
 
