@@ -1,9 +1,4 @@
 import color from "color";
-import { moveCard, shell } from "../parts";
-import { MAX_CARDS_PLAYED_PER_TURN } from "../constants";
-import { apply } from "../action";
-import { renderWorldState } from "../rendering/renderWorldState";
-import { renderSegment } from "../rendering/renderSegment";
 import { spendPlayerCard } from "./index";
 
 /**

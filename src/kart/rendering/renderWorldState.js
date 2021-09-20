@@ -1,30 +1,19 @@
-import { renderSegment } from "./renderSegment";
-import { renderScale } from "./constants";
-import { renderPlayer } from "./renderPlayer";
-
-const renderBody = ( bodies ) =>
-    `border: ${renderScale * 3}px dashed; border-color: ${bodies
-        .map( ( b ) => b.color )
-        .join( " " )};border-radius: 3px`;
-
-export const playerTrackComponent = ( player ) => {
-    const arr = Array( player.pos.val ).fill( 0 );
-    const targets =
-        arr.reduce( ( s ) => s + "%c ", "" ) + "%c" + ( player.boost ? "🍄" : " " );
-    const styles = arr
-        .map( () => renderSegment({ color: "transparent" }) )
-        .concat( renderPlayer( player ) );
-
-    return [ targets, styles ];
-};
+import { buildKart } from "./builders/buildWorldKart";
+import { buildShell } from "./builders/buildShell";
+import { buildTrack } from "./builders/buildTrack";
 
 export const renderWorldState = ( world ) => {
-    const track = world.segments.reduce( ( s ) => s + "%c ", "" ); // can't use join because for the css to work there has to be a space after each '%c' and `.join(' ')` trims the last space
-    const colors = world.segments.map( renderSegment );
+    // build track
+    const [ trackTargets, trackStyles ] = buildTrack( world.segments );
+    // render track
+    console.log( trackTargets, ...trackStyles );
 
-    console.log( track, ...colors );
-    world.bodies.forEach( ( b ) => {
-        const [ targets, styles ] = playerTrackComponent( b );
+    world.bodies.forEach( ( body ) => {
+        // build body
+        const [ targets, styles ] = body.isShell
+            ? buildShell( body )
+            : buildKart( body );
+        // render body
         console.log( targets, ...styles );
     });
 

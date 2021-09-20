@@ -12,7 +12,7 @@ import { addTweenColors, blue, green, red, yellow } from "./color";
 import { renderWorldState } from "./rendering/renderWorldState";
 import { renderCurrentPlayerUI } from "./render/renderCurrentPlayerUI";
 import { BOOST_MAX_CARDS, items, MAX_CARDS_PLAYED_PER_TURN } from "./constants";
-import { playerComponent } from "./rendering/playerComponent";
+import { renderEndOfTurn } from "./rendering/renderEndOfTurn";
 
 /**
  *
@@ -49,24 +49,19 @@ const world = {
 };
 
 const isTurnOver = ( worldState, player ) => {
-    const [ playerTarget, playerCSS ] = playerComponent( player );
     if ( player.crashed ) {
-        console.log( playerTarget, playerCSS, "crashed" );
+        renderEndOfTurn.crashed( player );
         return true;
     }
     if ( !player.moves.length ) {
-        console.log( playerTarget, playerCSS, "ran out of moves." );
+        renderEndOfTurn.outOfMoves( player );
         return true;
     }
     if (
         worldState.cardsPlayed >=
         ( player.boost ? BOOST_MAX_CARDS : MAX_CARDS_PLAYED_PER_TURN )
     ) {
-        console.log(
-            playerTarget,
-            playerCSS,
-            "made the maximum amount of move this turn."
-        );
+        renderEndOfTurn.maxCards( player );
         return true;
     }
 };

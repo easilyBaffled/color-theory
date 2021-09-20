@@ -12,9 +12,9 @@
 
 - [x] How should the shield work? boolean? number?
 
-> If the shield value was a number then I could tick down based on the number of cards that would be lost.
+> If the shield value was a number than I could tick down based on the number of cards that would be lost.
 > Doing that would mean I would have to check if the shield would burst or just say the shield will absorb everything when it hits 0, but still benefit you if it has more to go
-> Additionally by making the shield a number you could play as many as you like and I just have to add a number to it.
+> Additionally by making the shield a number you could play as many as you like, and I just have to add a number to it.
 
 - [x] How to play the shield?
 
@@ -57,7 +57,7 @@
 
     - [x] What’s the distance with transparent?
 
-> currently nothing because I don't factor in the alpha in a color
+> currently, nothing because I don't factor in the alpha in a color
 
     - [x] How will it be applied to a body
 
@@ -98,12 +98,53 @@
 
 <details>
   <summary><strong>Rendering shell</strong></summary>
-- [ ] circle
+- [x] circle
+</details>
+
+- [ ] How should rendering work?
+- [ ] move all rendering to “component” files
+
+<details>
+	<summary>
+		<strong>Refactor Rendering</strong>
+	</summary>
+
+- [ ] How should rendering work?
+
+> I would like to separate the "rendering" from the "component".
+> Where **in the current scope** `components` is the css definition for a piece of state.
+> **in the current scope** Rendering provides each component with a rendering target,
+> specifically (**in the current scope**) a `%c `.
+> This gives the render functions with two responsibilities,
+> first they have to get pass state to the components and get the result,
+> second they have to align all the targets and state.
+> My experience has me thinking about rendering using a nested structure
+> but using `console.log` makes it a very strange double flat structure.
+> I need some functionality to help reconcile that. This is most going to be a factor in the `renderWorld`.
+> The other issue with the nested issue is for something like `kart` which is a composed form of `body` as is shell.
+> This shouldn't be _too_ hard to reconcile, as I only need to care about string concatenation.
+
+- [x] move all rendering to “component” files
+
+> I realized that thing that I want, separating changing state and rendering,
+> requires an amount of work that I don't want to make right now.
+> There may be ways to do it, but the one that comes to mind is essentially React
+> where I have a function to **commit** all changes to state and use that function to trigger a render.
+> It would result in a significant change in my code structure and reduce the amount of freedom that I have right now.
+>
+> I would be tempted to throw a proxy on `world` and hid the "committing" like how `immer` works,
+> but I could windup with either a lot of renders as I update small things in what should be a batch,
+> or I would have to flag situations for the `commit` to ignore
+>
+> As another example, I really don't like that I am calling `renderWorldState` _in_ `moveShell`
+> because it creates and awkward implicit dependency.
+
 </details>
 
 <details>
-	<summary><strong>Separation</strong></summary>
-	- [ ] move all rendering to “component” files
+	<summary>
+		<strong>Separation</strong>
+	</summary>
 	- [ ] Move all verbs to standalone files
 	- [ ] Move all state building to dir
 	- [ ] what state updates should hook into rendering so that I can share the changes across webRTC and have everyone
@@ -112,7 +153,10 @@
 
 <details>
   <summary><strong>WebRTC</strong></summary>
-- [ ] https://surma.dev/things/comlink-webrtc/
+- [X] https://surma.dev/things/comlink-webrtc/
+- [ ] https://github.com/GoogleChromeLabs/comlink/tree/29a1c8b3e3d2498383f35f432791c674c1d761d2/docs/examples/webrtc
+- [ ] https://glitch.com/edit/#!/comlink-webrtc?path=README.md%3A1%3A0
+- [ ] https://webrtc.org/getting-started/peer-connections
 - [ ] https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel
 </details>
 
